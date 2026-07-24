@@ -1,156 +1,246 @@
+> Sacale la cita a tu agente, no a la fila.
+
+---
+
 # automatizacion-citas-edus-ccss
 
-**Skill para que agentes de IA saquen citas médicas en EDUS (CCSS) a tu nombre.**
+**Un skill para que tu agente de IA te saque las citas del EDUS.**
 
-Mi [Hermes Agent](https://hermes-agent.nousresearch.com/) aprendió a sacar citas en el EDUS de la CCSS y generó este skill por su cuenta. Lo publico para que cualquier persona con un agente similar (Hermes, OpenClaw, etc.) pueda reutilizarlo sin repetir el proceso de descubrimiento.
+Si alguna vez intentaste sacar cita por el EDUS, ya sabés el chiste: entrás a las 6am, el CAPTCHA no se deja, para cuando lográs entrar ya no hay cupos, y repetís mañana. Y pasado mañana.
 
-El agente que lo creó corría con el modelo **GLM-5.2**.
+Mi [Hermes Agent](https://hermes-agent.nousresearch.com/) se cansó de eso, aprendió a manejar el EDUS por su cuenta, y escribió esta guía documentando todo lo que descubrió. La publico para que no tengás que repetir el proceso.
 
----
-
-## ⚠️ Antes de empezar — léalo completo
-
-### Alcance
-- Solo se pueden sacar citas **para uno mismo y para el grupo familiar registrado en EDUS**. No sirve para terceros ni para uso masivo.
-- Es exactamente lo mismo que usted haría a mano desde la app EDUS o el sitio de citas de la CCSS: el agente automatiza los clics, no abre puertas nuevas.
-- No es un producto oficial de la CCSS. No hay afiliación ni respaldo institucional.
-
-### Credenciales
-Para funcionar, **el agente le va a pedir sus credenciales del EDUS**. Tome esto muy en serio:
-
-- Sus credenciales dan acceso a su **expediente digital único en salud**. Es información médica sensible, suya y de su grupo familiar.
-- Use este skill **únicamente en un agente autohospedado**, corriendo en hardware que usted controla. Nunca en una instancia compartida, pública o de un tercero.
-- Prefiera guardar las credenciales en el gestor de secretos / variables de entorno de su agente, no en texto plano dentro de un prompt o un archivo del workspace.
-- Revise a qué modelo está enviando el contexto. Si usa un proveedor en la nube, **sus credenciales pueden terminar en los logs del proveedor**. Un modelo local elimina ese riesgo.
-- No exponga el gateway de su agente a Internet sin autenticación y TLS.
-
-> Si algo de lo anterior no le queda claro, saque la cita a mano. No vale la pena.
+Corría con **GLM-5.2**, por si te sirve el dato.
 
 ---
 
-## Requisitos
+## Ojo: esto es un skill, no un programa
 
-- Un agente de IA con soporte para skills y ejecución de herramientas (navegador/HTTP).
-- Un modelo con ventana de contexto amplia y buen tool-calling. Probado con **GLM-5.2**.
-- Cuenta activa en EDUS con su grupo familiar ya registrado.
+Este repo tiene **un solo archivo**: [`EDUS-Citas-Automation-Guide.md`](EDUS-Citas-Automation-Guide.md).
 
----
+No hay nada que compilar, ni dependencias, ni configuración previa. Es conocimiento en Markdown — cómo está armado el EDUS por dentro, el flujo de reserva, los IDs, los errores típicos y todos los tropiezos que el agente encontró en el camino.
 
-## Instalación del agente
+Se lo pasás a tu agente y **él resuelve el cómo** con las herramientas que tenga. Uno con navegador lo hará de una forma, otro escribiendo código lo hará de otra. La guía no te amarra a ningún método.
 
-Puede usar cualquiera de los dos. Ambos son open source, self-hosted y soportan skills.
+Por eso corre igual en Hermes, OpenClaw, Claude Code, Codex, o lo que estés usando.
 
-### Opción A — Hermes Agent (Nous Research)
+Trae frontmatter estándar, así que casi todos los agentes lo detectan solos:
 
-| Recurso | Enlace |
-|---|---|
-| Sitio oficial | https://hermes-agent.nousresearch.com/ |
-| Repositorio | https://github.com/NousResearch/hermes-agent |
-| Documentación | https://hermes-agent.nousresearch.com/docs/ |
-| Quickstart | https://hermes-agent.nousresearch.com/docs/getting-started/quickstart |
-| Instalación | https://hermes-agent.nousresearch.com/docs/getting-started/installation |
-
-Instalación por terminal (Linux, macOS, WSL2):
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-hermes doctor      # verifica la instalación
-hermes setup       # asistente de configuración (proveedor, modelo, tools)
+```yaml
+name: edus-citas-automation-guide
+description: Guía genérica para automatizar la reserva de citas médicas en EDUS (CCSS Costa Rica) con cualquier AI agent — sin datos personales.
+category: productivity
 ```
 
-También hay instaladores de escritorio para macOS y Windows en el sitio oficial.
+Y no, **no tiene datos personales**. Ninguna cédula, ningún nombre, ninguna clave.
 
-> Hermes exige un modelo con al menos **64K tokens de contexto**; los modelos con ventana menor se rechazan al arrancar.
+---
 
-### Opción B — OpenClaw
+## El alcance, para que no haya sorpresas
 
-| Recurso | Enlace |
-|---|---|
-| Sitio oficial | https://openclaw.ai/ |
-| Repositorio | https://github.com/openclaw/openclaw |
-| Documentación | https://docs.openclaw.ai/ |
-| Directorio de skills (ClawHub) | https://clawhub.ai/ |
+- Solo sacás citas **para vos y para tu grupo familiar ya registrado en EDUS**. No es para terceros ni para uso masivo.
+- Es exactamente lo mismo que harías a mano desde la app o el sitio de la CCSS. El agente hace los clics, nada más.
+- Esto no es oficial de la CCSS ni tiene nada que ver con ellos.
 
-Instalación (requiere Node.js 20+):
+---
 
-```bash
-npm install -g openclaw@latest
-openclaw onboard --install-daemon
+## Hablemos de tus credenciales 🔐
+
+Tu agente va a necesitar tu cédula y tu clave del EDUS. Antes de dárselas, leé esto:
+
+- Esas credenciales abren tu **expediente digital único en salud** — el tuyo y el de tu grupo familiar. No es una cuenta de Netflix.
+- Corré esto **solo en un agente tuyo, en hardware tuyo**. Nunca en una instancia compartida, pública o de un tercero.
+- Pasalas por **variables de entorno**, no escritas en el chat ni en un archivo del workspace. La guía ya asume ese patrón: `EDUS_CEDULA`, `EDUS_CLAVE`, `FAMILIAR_CEDULA`.
+- Fijate a qué modelo le estás mandando el contexto. Con un proveedor en la nube, **tus credenciales pueden quedar en los logs de ellos**. Con un modelo local, ese problema no existe.
+- No expongás el gateway de tu agente a Internet sin autenticación y TLS.
+
+> Si algo de esto no te queda claro, mejor sacá la cita a mano. En serio.
+
+---
+
+## ¿Qué agente uso?
+
+El que quieras, mientras pueda navegar y ejecutar. Los más comunes:
+
+| Agente | Dónde | Instalación |
+|---|---|---|
+| **Hermes Agent** | [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/) · [GitHub](https://github.com/NousResearch/hermes-agent) | `curl -fsSL https://hermes-agent.nousresearch.com/install.sh \| bash` |
+| **OpenClaw** | [openclaw.ai](https://openclaw.ai/) · [GitHub](https://github.com/openclaw/openclaw) | `npm install -g openclaw@latest` → `openclaw onboard --install-daemon` |
+| **Claude Code** | [claude.com/product/claude-code](https://claude.com/product/claude-code) | Ver docs oficiales |
+| **Codex** | [openai.com/codex](https://openai.com/codex/) | Ver docs oficiales |
+
+Docs de instalación con más detalle:
+- Hermes — [Quickstart](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart) · [Instalación](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
+- OpenClaw — [docs.openclaw.ai](https://docs.openclaw.ai/) · [ClawHub](https://clawhub.ai/)
+
+Dos notas rápidas:
+
+> Hermes pide un modelo con mínimo **64K de contexto**. GLM-5.2, Claude, GPT, Gemini, DeepSeek y Qwen pasan sobrados.
+>
+> OpenClaw recomienda **no exponer el Gateway directo a Internet** — reverse proxy con TLS y mínimo privilegio.
+
+---
+
+## Instalarlo
+
+### La forma rápida (sin instalar nada)
+
+Pasale el link y ya:
+
+```
+Leé https://github.com/jeudytuanisapps/automatizacion-citas-edus-ccss/blob/main/EDUS-Citas-Automation-Guide.md
+y seguí esa guía para sacarme una cita en el EDUS.
 ```
 
-> Recomendación de seguridad de los propios mantenedores: **no exponga el Gateway directamente a Internet.** Use un reverse proxy con TLS y principio de mínimo privilegio.
+O bajás el `.md` y lo adjuntás al chat. Funciona igual de bien.
+
+### La forma permanente (como skill)
+
+Si lo vas a usar seguido, dejalo instalado:
+
+```bash
+git clone https://github.com/jeudytuanisapps/automatizacion-citas-edus-ccss.git
+cd automatizacion-citas-edus-ccss
+
+# Hermes Agent
+mkdir -p ~/.hermes/skills/edus-citas
+cp EDUS-Citas-Automation-Guide.md ~/.hermes/skills/edus-citas/SKILL.md
+
+# OpenClaw
+mkdir -p ~/.openclaw/workspace/skills/edus-citas
+cp EDUS-Citas-Automation-Guide.md ~/.openclaw/workspace/skills/edus-citas/SKILL.md
+
+# Claude Code
+mkdir -p ~/.claude/skills/edus-citas
+cp EDUS-Citas-Automation-Guide.md ~/.claude/skills/edus-citas/SKILL.md
+```
+
+Casi todos los agentes esperan el archivo como `SKILL.md` dentro de una carpeta — por eso lo renombramos. Revisá la ruta exacta en las docs de tu versión, que puede cambiar.
+
+Reiniciá el agente y confirmá que aparece en la lista.
 
 ---
 
-## Instalación del skill
+## Cómo se lo pedís
 
-1. Clone este repositorio:
+### La primera vez
 
-   ```bash
-   git clone https://github.com/<usuario>/automatizacion-citas-edus-ccss.git
-   ```
+Antes de darle credenciales, dejá que lea y te cuente el plan:
 
-2. Copie el skill al directorio de skills de su agente:
+```
+Leé el skill de citas EDUS. Contame qué vas a hacer, qué herramientas
+necesitás y qué información me vas a pedir. No ejecutés nada todavía.
+```
 
-   ```bash
-   # Hermes Agent
-   cp -r automatizacion-citas-edus-ccss ~/.hermes/skills/
+Así revisás antes de exponer nada. Si el plan no te gusta, lo corregís ahí mismo.
 
-   # OpenClaw
-   cp -r automatizacion-citas-edus-ccss ~/.openclaw/workspace/skills/
-   ```
+### Sacar tu cita
 
-   > Verifique la ruta exacta en la documentación de su versión; puede variar según cómo instaló el agente.
+```
+Usá el skill de citas EDUS y sacame una cita de medicina general.
+Mis credenciales están en EDUS_CEDULA y EDUS_CLAVE.
+```
 
-3. Reinicie el agente y confirme que el skill aparece listado.
+### Sacarle cita a un familiar
 
-4. Pídale al agente algo como:
+Tu grupo familiar no necesita credenciales propias — se entra con las tuyas:
 
-   ```
-   Sacame una cita en el EBAIS para <nombre del familiar>
-   ```
+```
+Usá el skill de citas EDUS. Entrá con mis credenciales (EDUS_CEDULA,
+EDUS_CLAVE) y sacale una cita de medicina general a mi familiar
+con cédula FAMILIAR_CEDULA.
+```
 
-   El agente le va a solicitar las credenciales de EDUS en ese momento.
+### El watchdog (lo bueno de verdad)
+
+Acá es donde esto se pone interesante. La guía documenta que los cupos **se liberan entre 5am y 8am hora Costa Rica**. Fuera de esa ventana casi no hay nada, así que monitorear 24/7 es desperdicio.
+
+Le decís que vigile y reserve solo:
+
+```
+Armá un cron con el skill de citas EDUS que revise cupos de medicina
+general entre 5am y 8am hora Costa Rica, reserve el primero que
+encuentre, y me avise por Telegram cuando lo haga.
+```
+
+En Hermes eso va como cron job con `no_agent: true` y entrega por Telegram. Cada 5 minutos en esa ventana es más que suficiente.
+
+Y listo — te despertás con la cita ya sacada.
+
+### Si preferís decidir vos
+
+También podés dejarlo en modo chismoso, que solo avise:
+
+```
+Usá el skill de citas EDUS. Revisá si hay cupos de medicina general
+y decime cuáles hay, pero no reservés nada.
+```
+
+### Tips
+
+- **Sé específico con servicio y especialidad.** "Medicina general" es lo común, pero el EDUS tiene un montón más.
+- **Pedile que confirme.** Fecha, hora y consultorio.
+- **Verificá en la app oficial.** Siempre. El cupo se puede haber tomado entre que lo vio y lo reservó.
+- **Si falla, pedile el error textual.** La guía tiene tabla de errores del EDUS y qué significa cada uno.
 
 ---
 
-## Descargo de responsabilidad
+## Qué trae la guía por dentro
 
-Este proyecto se publica **tal cual, sin garantías**, con fines educativos y de automatización personal. Ni el autor ni los colaboradores se hacen responsables por citas mal agendadas, pérdida de cupos, bloqueos de cuenta, filtración de credenciales o cualquier otro daño derivado del uso de este skill.
-
-La CCSS puede cambiar el EDUS en cualquier momento y romper el skill sin aviso. Úselo bajo su propio riesgo y **siempre verifique la cita en la app oficial de EDUS**.
+| Sección | De qué va |
+|---|---|
+| Arquitectura | Los dos sistemas de citas de la CCSS y en qué difieren |
+| Fase 1 | Reconocimiento sin credenciales |
+| Fase 2 | El login |
+| Fase 3 | La reserva: servicio → especialidad → cupos → confirmar |
+| Fase 4 | Citas para el grupo familiar |
+| Fase 5 | Monitoreo recurrente y la ventana horaria que sí sirve |
+| Pitfalls | Todo con lo que el agente se topó, para que vos no |
+| Referencia | IDs del DOM y tipos de identificación |
 
 ---
 
-## Contribuciones
+## El descargo de siempre
 
-Issues y PRs son bienvenidos, sobre todo:
-- Ajustes cuando la CCSS cambie el flujo del EDUS.
-- Reportes de compatibilidad con otros modelos y agentes.
+Esto se publica **tal cual, sin garantías**. Si te queda mal la cita, perdés un cupo, te bloquean la cuenta o se te filtran las credenciales, corre por tu cuenta.
+
+La CCSS puede cambiar el EDUS cuando le dé la gana y romper todo sin avisar. Usalo bajo tu propio riesgo y **verificá siempre en la app oficial**.
+
+---
+
+## ¿Querés aportar?
+
+Issues y PRs bienvenidos, sobre todo:
+- Arreglos cuando la CCSS cambie el flujo.
+- Reportes de qué agentes y modelos funcionan.
 - Mejoras al manejo de credenciales.
 
-**Nunca incluya credenciales, cédulas, números de asegurado ni capturas con datos personales en issues o PRs.**
+**Nunca subás credenciales, cédulas, números de asegurado ni capturas con datos personales.** Ni en issues ni en PRs.
 
 ---
 
-## Tutoriales en español (YouTube)
+## Tutoriales en español
 
-Recursos de la comunidad para instalar y configurar los agentes. No son oficiales ni están afiliados a este repositorio.
+Material de la comunidad para montar los agentes. No son oficiales ni tienen relación con este repo.
 
-### Hermes Agent
-- [Curso de Hermes Agente — playlist completa en español](https://www.youtube.com/playlist?list=PLWUX-KZsnKXT2gprZvjTymfu3KBIcxSL9)
-- [HERMES 2026: Curso COMPLETO en Español (Agente IA)](https://www.youtube.com/watch?v=FQZGoSwdS_0)
-- [Hermes Agent + Nous Research como proveedor de IA](https://www.youtube.com/watch?v=8L-V4iLtBBU)
+**Hermes Agent**
+- [Curso de Hermes Agente — playlist completa](https://www.youtube.com/playlist?list=PLWUX-KZsnKXT2gprZvjTymfu3KBIcxSL9)
+- [HERMES 2026: Curso COMPLETO en Español](https://www.youtube.com/watch?v=FQZGoSwdS_0)
+- [Hermes Agent + Nous Research como proveedor](https://www.youtube.com/watch?v=8L-V4iLtBBU)
 
-### OpenClaw
-- [OpenClaw de NOVATO a PRO — Curso completo en español](https://www.youtube.com/watch?v=JVA09oUTXzM)
-- [OpenClaw para Principiantes: Setup Completo y Configuración (Fazt)](https://www.youtube.com/watch?v=f_G3q3yuGFk)
-- [Guía completa de OpenClaw: instalación, configuración y funciones](https://www.youtube.com/watch?v=jbvRC7LZcLI)
+**OpenClaw**
+- [OpenClaw de NOVATO a PRO — curso completo](https://www.youtube.com/watch?v=JVA09oUTXzM)
+- [OpenClaw para Principiantes: Setup Completo (Fazt)](https://www.youtube.com/watch?v=f_G3q3yuGFk)
+- [Guía completa de OpenClaw](https://www.youtube.com/watch?v=jbvRC7LZcLI)
 - [Probé 5 formas de instalar OpenClaw… esta es la mejor](https://www.youtube.com/watch?v=jDX4n9yc6v8)
-- [Instala OpenClaw de forma segura — guía paso a paso](https://www.youtube.com/watch?v=od9iUOW5Znc)
+- [Instala OpenClaw de forma segura](https://www.youtube.com/watch?v=od9iUOW5Znc)
 
 ---
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE).
+MIT
+
+---
+
+<sub>Hecho en Costa Rica 🇨🇷 por alguien que se cansó de madrugar para nada.</sub>
