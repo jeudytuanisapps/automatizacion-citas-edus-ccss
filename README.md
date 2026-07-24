@@ -1,16 +1,16 @@
-> Sacale la cita a tu agente, no a la fila.
+> Sáquele la cita a su agente, no a la fila.
 
 ---
 
 # automatizacion-citas-edus-ccss
 
-**Un skill para que tu agente de IA te saque las citas del EDUS.**
+**Un skill para que su agente de IA le saque las citas del EDUS.**
 
-Si alguna vez intentaste sacar cita por el EDUS, ya sabés el chiste: entrás a las 6am, el CAPTCHA no se deja, para cuando lográs entrar ya no hay cupos, y repetís mañana. Y pasado mañana.
+Si alguna vez intentó sacar cita por el EDUS, ya sabe el chiste: entra a las 6am, el CAPTCHA no se deja, para cuando logra entrar ya no hay cupos, y repite mañana. Y pasado mañana.
 
-Mi [Hermes Agent](https://hermes-agent.nousresearch.com/) se cansó de eso, aprendió a manejar el EDUS por su cuenta, y escribió esta guía documentando todo lo que descubrió. La publico para que no tengás que repetir el proceso.
+Mi [Hermes Agent](https://hermes-agent.nousresearch.com/) se cansó de eso, aprendió a manejar el EDUS por su cuenta, y escribió esta guía documentando todo lo que descubrió. La publico para que usted no tenga que repetir el proceso.
 
-Corría con **GLM-5.2**, por si te sirve el dato.
+Corría con **GLM-5.2**, por si le sirve el dato.
 
 ---
 
@@ -20,9 +20,9 @@ Este repo tiene **un solo archivo**: [`EDUS-Citas-Automation-Guide.md`](EDUS-Cit
 
 No hay nada que compilar, ni dependencias, ni configuración previa. Es conocimiento en Markdown — cómo está armado el EDUS por dentro, el flujo de reserva, los IDs, los errores típicos y todos los tropiezos que el agente encontró en el camino.
 
-Se lo pasás a tu agente y **él resuelve el cómo** con las herramientas que tenga. Uno con navegador lo hará de una forma, otro escribiendo código lo hará de otra. La guía no te amarra a ningún método.
+Se lo pasa a su agente y **él resuelve el cómo** con las herramientas que tenga. Uno con navegador lo hará de una forma, otro escribiendo código lo hará de otra. La guía no lo amarra a ningún método.
 
-Por eso corre igual en Hermes, OpenClaw, Claude Code, Codex, o lo que estés usando.
+Por eso corre igual en Hermes, OpenClaw, Claude Code, Codex, o lo que esté usando.
 
 Trae frontmatter estándar, así que casi todos los agentes lo detectan solos:
 
@@ -38,29 +38,29 @@ Y no, **no tiene datos personales**. Ninguna cédula, ningún nombre, ninguna cl
 
 ## El alcance, para que no haya sorpresas
 
-- Solo sacás citas **para vos y para tu grupo familiar ya registrado en EDUS**. No es para terceros ni para uso masivo.
-- Es exactamente lo mismo que harías a mano desde la app o el sitio de la CCSS. El agente hace los clics, nada más.
+- Solo saca citas **para usted y para su grupo familiar ya registrado en EDUS**. No es para terceros ni para uso masivo.
+- Es exactamente lo mismo que haría a mano desde la app o el sitio de la CCSS. El agente hace los clics, nada más.
 - Esto no es oficial de la CCSS ni tiene nada que ver con ellos.
 
 ---
 
-## Hablemos de tus credenciales 🔐
+## Hablemos de sus credenciales 🔐
 
-Tu agente va a necesitar tu cédula y tu clave del EDUS. Antes de dárselas, leé esto:
+Su agente va a necesitar su cédula y su clave del EDUS. Antes de dárselas, lea esto:
 
-- Esas credenciales abren tu **expediente digital único en salud** — el tuyo y el de tu grupo familiar. No es una cuenta de Netflix.
-- Corré esto **solo en un agente tuyo, en hardware tuyo**. Nunca en una instancia compartida, pública o de un tercero.
-- Pasalas por **variables de entorno**, no escritas en el chat ni en un archivo del workspace. La guía ya asume ese patrón: `EDUS_CEDULA`, `EDUS_CLAVE`, `FAMILIAR_CEDULA`.
-- Fijate a qué modelo le estás mandando el contexto. Con un proveedor en la nube, **tus credenciales pueden quedar en los logs de ellos**. Con un modelo local, ese problema no existe.
-- No expongás el gateway de tu agente a Internet sin autenticación y TLS.
+- Esas credenciales abren su **expediente digital único en salud** — el suyo y el de su grupo familiar. No es una cuenta de Netflix.
+- Corra esto **solo en un agente suyo, en hardware suyo**. Nunca en una instancia compartida, pública o de un tercero.
+- Páselas por **variables de entorno**, no escritas en el chat ni en un archivo del workspace. La guía ya asume ese patrón: `EDUS_CEDULA`, `EDUS_CLAVE`, `FAMILIAR_CEDULA`.
+- Fíjese a qué modelo le está mandando el contexto. Con un proveedor en la nube, **sus credenciales pueden quedar en los logs de ellos**. Con un modelo local, ese problema no existe.
+- No exponga el gateway de su agente a Internet sin autenticación y TLS.
 
-> Si algo de esto no te queda claro, mejor sacá la cita a mano. En serio.
+> Si algo de esto no le queda claro, mejor saque la cita a mano. En serio.
 
 ---
 
 ## ¿Qué agente uso?
 
-El que quieras, mientras pueda navegar y ejecutar. Los más comunes:
+El que quiera, mientras pueda navegar y ejecutar. Los más comunes:
 
 | Agente | Dónde | Instalación |
 |---|---|---|
@@ -85,18 +85,18 @@ Dos notas rápidas:
 
 ### La forma rápida (sin instalar nada)
 
-Pasale el link y ya:
+Pásele el link y ya:
 
 ```
-Leé https://github.com/jeudytuanisapps/automatizacion-citas-edus-ccss/blob/main/EDUS-Citas-Automation-Guide.md
-y seguí esa guía para sacarme una cita en el EDUS.
+Lea https://github.com/jeudytuanisapps/automatizacion-citas-edus-ccss/blob/main/EDUS-Citas-Automation-Guide.md
+y siga esa guía para sacarme una cita en el EDUS.
 ```
 
-O bajás el `.md` y lo adjuntás al chat. Funciona igual de bien.
+O baja el `.md` y lo adjunta al chat. Funciona igual de bien.
 
 ### La forma permanente (como skill)
 
-Si lo vas a usar seguido, dejalo instalado:
+Si lo va a usar seguido, déjelo instalado:
 
 ```bash
 git clone https://github.com/jeudytuanisapps/automatizacion-citas-edus-ccss.git
@@ -115,73 +115,73 @@ mkdir -p ~/.claude/skills/edus-citas
 cp EDUS-Citas-Automation-Guide.md ~/.claude/skills/edus-citas/SKILL.md
 ```
 
-Casi todos los agentes esperan el archivo como `SKILL.md` dentro de una carpeta — por eso lo renombramos. Revisá la ruta exacta en las docs de tu versión, que puede cambiar.
+Casi todos los agentes esperan el archivo como `SKILL.md` dentro de una carpeta — por eso lo renombramos. Revise la ruta exacta en las docs de su versión, que puede cambiar.
 
-Reiniciá el agente y confirmá que aparece en la lista.
+Reinicie el agente y confirme que aparece en la lista.
 
 ---
 
-## Cómo se lo pedís
+## Cómo se lo pide
 
 ### La primera vez
 
-Antes de darle credenciales, dejá que lea y te cuente el plan:
+Antes de darle credenciales, deje que lea y le cuente el plan:
 
 ```
-Leé el skill de citas EDUS. Contame qué vas a hacer, qué herramientas
-necesitás y qué información me vas a pedir. No ejecutés nada todavía.
+Lea el skill de citas EDUS. Cuénteme qué va a hacer, qué herramientas
+necesita y qué información me va a pedir. No ejecute nada todavía.
 ```
 
-Así revisás antes de exponer nada. Si el plan no te gusta, lo corregís ahí mismo.
+Así revisa antes de exponer nada. Si el plan no le gusta, lo corrige ahí mismo.
 
-### Sacar tu cita
+### Sacar su cita
 
 ```
-Usá el skill de citas EDUS y sacame una cita de medicina general.
+Use el skill de citas EDUS y sáqueme una cita de medicina general.
 Mis credenciales están en EDUS_CEDULA y EDUS_CLAVE.
 ```
 
 ### Sacarle cita a un familiar
 
-Tu grupo familiar no necesita credenciales propias — se entra con las tuyas:
+Su grupo familiar no necesita credenciales propias — se entra con las suyas:
 
 ```
-Usá el skill de citas EDUS. Entrá con mis credenciales (EDUS_CEDULA,
-EDUS_CLAVE) y sacale una cita de medicina general a mi familiar
+Use el skill de citas EDUS. Entre con mis credenciales (EDUS_CEDULA,
+EDUS_CLAVE) y sáquele una cita de medicina general a mi familiar
 con cédula FAMILIAR_CEDULA.
 ```
 
 ### El watchdog (lo bueno de verdad)
 
-Acá es donde esto se pone interesante. La guía documenta que los cupos **se liberan entre 5am y 8am hora Costa Rica**. Fuera de esa ventana casi no hay nada, así que monitorear 24/7 es desperdicio.
+Aquí es donde esto se pone interesante. La guía documenta que los cupos **se liberan entre 5am y 8am hora Costa Rica**. Fuera de esa ventana casi no hay nada, así que monitorear 24/7 es desperdicio.
 
-Le decís que vigile y reserve solo:
+Le dice que vigile y reserve solo:
 
 ```
-Armá un cron con el skill de citas EDUS que revise cupos de medicina
+Arme un cron con el skill de citas EDUS que revise cupos de medicina
 general entre 5am y 8am hora Costa Rica, reserve el primero que
 encuentre, y me avise por Telegram cuando lo haga.
 ```
 
 En Hermes eso va como cron job con `no_agent: true` y entrega por Telegram. Cada 5 minutos en esa ventana es más que suficiente.
 
-Y listo — te despertás con la cita ya sacada.
+Y listo — se despierta con la cita ya sacada.
 
-### Si preferís decidir vos
+### Si prefiere decidir usted
 
-También podés dejarlo en modo chismoso, que solo avise:
+También puede dejarlo en modo chismoso, que solo avise:
 
 ```
-Usá el skill de citas EDUS. Revisá si hay cupos de medicina general
-y decime cuáles hay, pero no reservés nada.
+Use el skill de citas EDUS. Revise si hay cupos de medicina general
+y dígame cuáles hay, pero no reserve nada.
 ```
 
 ### Tips
 
-- **Sé específico con servicio y especialidad.** "Medicina general" es lo común, pero el EDUS tiene un montón más.
-- **Pedile que confirme.** Fecha, hora y consultorio.
-- **Verificá en la app oficial.** Siempre. El cupo se puede haber tomado entre que lo vio y lo reservó.
-- **Si falla, pedile el error textual.** La guía tiene tabla de errores del EDUS y qué significa cada uno.
+- **Sea específico con servicio y especialidad.** "Medicina general" es lo común, pero el EDUS tiene un montón más.
+- **Pídale que confirme.** Fecha, hora y consultorio.
+- **Verifique en la app oficial.** Siempre. El cupo se puede haber tomado entre que lo vio y lo reservó.
+- **Si falla, pídale el error textual.** La guía tiene tabla de errores del EDUS y qué significa cada uno.
 
 ---
 
@@ -195,27 +195,27 @@ y decime cuáles hay, pero no reservés nada.
 | Fase 3 | La reserva: servicio → especialidad → cupos → confirmar |
 | Fase 4 | Citas para el grupo familiar |
 | Fase 5 | Monitoreo recurrente y la ventana horaria que sí sirve |
-| Pitfalls | Todo con lo que el agente se topó, para que vos no |
+| Pitfalls | Todo con lo que el agente se topó, para que usted no |
 | Referencia | IDs del DOM y tipos de identificación |
 
 ---
 
 ## El descargo de siempre
 
-Esto se publica **tal cual, sin garantías**. Si te queda mal la cita, perdés un cupo, te bloquean la cuenta o se te filtran las credenciales, corre por tu cuenta.
+Esto se publica **tal cual, sin garantías**. Si le queda mal la cita, pierde un cupo, le bloquean la cuenta o se le filtran las credenciales, corre por su cuenta.
 
-La CCSS puede cambiar el EDUS cuando le dé la gana y romper todo sin avisar. Usalo bajo tu propio riesgo y **verificá siempre en la app oficial**.
+La CCSS puede cambiar el EDUS cuando le dé la gana y romper todo sin avisar. Úselo bajo su propio riesgo y **verifique siempre en la app oficial**.
 
 ---
 
-## ¿Querés aportar?
+## ¿Quiere aportar?
 
 Issues y PRs bienvenidos, sobre todo:
 - Arreglos cuando la CCSS cambie el flujo.
 - Reportes de qué agentes y modelos funcionan.
 - Mejoras al manejo de credenciales.
 
-**Nunca subás credenciales, cédulas, números de asegurado ni capturas con datos personales.** Ni en issues ni en PRs.
+**Nunca suba credenciales, cédulas, números de asegurado ni capturas con datos personales.** Ni en issues ni en PRs.
 
 ---
 
