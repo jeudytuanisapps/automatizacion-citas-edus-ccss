@@ -6,11 +6,11 @@
 
 **Un skill para que su agente de IA le saque las citas del EDUS.**
 
-Si alguna vez intentó sacar cita por el EDUS, ya sabe el chiste: entra a las 6am, el CAPTCHA no se deja, para cuando logra entrar ya no hay cupos, y repite mañana. Y pasado mañana.
+Si alguna vez intentó sacar cita por el EDUS, ya sabe el chiste: no hay citas. Nunca. Hay que pagarle a la señora del barrio que va a hacer fila.
 
-Mi [Hermes Agent](https://hermes-agent.nousresearch.com/) se cansó de eso, aprendió a manejar el EDUS por su cuenta, y escribió esta guía documentando todo lo que descubrió. La publico para que usted no tenga que repetir el proceso.
+No más, mi [Hermes Agent](https://hermes-agent.nousresearch.com/) aprendió a manejar el EDUS por su cuenta, y escribió esta guía documentando todo lo que descubrió. La publico para que usted no tenga que repetir el proceso.
 
-Corría con **GLM-5.2**, por si le sirve el dato.
+Corría con el modelo **GLM-5.2**, por si le sirve el dato.
 
 ---
 
